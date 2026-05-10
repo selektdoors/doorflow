@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Angajati{% endblock %}
+{% block content %}
+<div class="grid grid-2">
+  <div class="card table-wrap">
+    <h2>Angajati</h2>
+    <table>
+      <thead><tr><th>Nume</th><th>User</th><th>Rol</th><th>Sectie</th><th>Status</th><th>Actiuni</th></tr></thead>
+      <tbody>
+        {% for user in employees %}
+        <tr>
+          <td>{{ user.full_name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ role_label(user.role) }}</td>
+          <td>{{ user.section.name if user.section else '-' }}</td>
+          <td>{{ 'activ' if user.active else 'arhivat' }}</td>
+          <td>
+            <details>
+              <summary>Modifica</summary>
+              <form method="post" action="{{ url_for('employee_update', user_id=user.id) }}">
+                <input name="full_name" value="{{ user.full_name }}" required>
+                <input name="username" value="{{ user.username }}" required>
+                <input name="password" placeholder="Parola noua (optional)">
+                <select name="role">
+                  <option value="employee" {% if user.role == 'employee' %}selected{% endif %}>employee</option>
+                  <option value="manager" {% if user.role == 'manager' %}selected{% endif %}>manager</option>
+                  <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>admin</option>
+                </select>
+                <select name="section_id">
+                  <option value="">-</option>
+                  {% for section in sections %}
+                  <option value="{{ section.id }}" {% if user.section_id == section.id %}selected{% endif %}>{{ section.name }}</option>
+                  {% endfor %}
+                </select>
+                <div class="actions"><button type="submit">Salveaza</button></div>
+              </form>
+              {% if user.username != 'admin' and user.active %}
+              <form method="post" action="{{ url_for('employee_archive', user_id=user.id) }}">
+                <div class="actions"><button class="btn btn-danger" type="submit">Arhiveaza</button></div>
+              </form>
+              {% endif %}
+            </details>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Adauga angajat</h2>
+    <form method="post" action="{{ url_for('employee_new') }}">
+      <div class="row">
+        <div><label>Nume complet</label><input name="full_name" required></div>
+        <div><label>Username</label><input name="username" required></div>
+      </div>
+      <div class="row">
+        <div><label>Parola</label><input name="password" required></div>
+        <div><label>Rol</label>
+          <select name="role">
+            <option value="employee">employee</option>
+            <option value="manager">manager</option>
+            <option value="admin">admin</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Sectie</label>
+        <select name="section_id">
+          <option value="">-</option>
+          {% for section in sections %}
+          <option value="{{ section.id }}">{{ section.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="actions"><button type="submit">Salveaza</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

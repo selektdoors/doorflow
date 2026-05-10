@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}{{ order.order_number }}{% endblock %}
+{% block content %}
+<div class="grid grid-2">
+  <div class="card">
+    <h2>{{ order.order_number }}</h2>
+    <div><strong>Client:</strong> {{ order.client_name }}</div>
+    <div><strong>Produs:</strong> {{ order.product_name }}</div>
+    <div><strong>Dimensiuni:</strong> {{ order.dimensions or '-' }}</div>
+    <div><strong>Finisaj:</strong> {{ order.finish or '-' }}</div>
+    <div><strong>Cantitate:</strong> {{ order.quantity }}</div>
+    <div><strong>Termen:</strong> {{ order.due_date.strftime('%d.%m.%Y') if order.due_date else '-' }}</div>
+    <div><strong>Sectie curenta:</strong> {{ order.current_section.name if order.current_section else '-' }}</div>
+    <div><strong>Responsabil:</strong> {{ order.current_employee.full_name if order.current_employee else '-' }}</div>
+    <div style="margin-top:8px;"><span class="status status-{{ order.status }}">{{ status_label(order.status) }}</span></div>
+    {% if current_delay > 0 %}<div class="small danger-text" style="margin-top:8px;">Intarziere curenta: {{ current_delay }} zile</div>{% endif %}
+    {% if order.notes %}<p><strong>Observatii:</strong> {{ order.notes }}</p>{% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Atasamente</h3>
+    <form method="post" action="{{ url_for('upload_attachment', order_id=order.id) }}" enctype="multipart/form-data">
+      <div class="row">
+        <div><input type="file" name="file" required></div>
+        <div><button type="submit">Incarca</button></div>
+      </div>
+    </form>
+    <div class="list">
+      {% for file in order.attachments %}
+      <div class="item">
+        <a href="{{ url_for('download_attachment', attachment_id=file.id) }}">{{ file.original_name }}</a>
+        <div class="small">{{ file.uploaded_by.full_name if file.uploaded_by else '-' }} · {{ file.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</div>
+      </div>
+      {% else %}
+      <p class="label">Nu exista atasamente.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if current_user.role != ROLE_MANAGER and (current_user.is_admin or order.current_employee_id == current_user.id) %}
+<div class="card">
+  <h3>Trimite comanda</h3>
+  <form method="post" action="{{ url_for('send_order', order_id=order.id) }}">
+    <div class="row">
+      <div>
+        <label>Angajat destinatar</label>
+        <select name="to_employee_id" required>
+          {% for emp in employees %}
+          <option value="{{ emp.id }}">{{ emp.full_name }}{% if emp.section %} - {{ emp.section.name }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div>
+      <label>Observatii predare</label>
+      <textarea name="sender_note"></textarea>
+    </div>
+    <div class="actions">
+      <button type="submit">Trimite</button>
+    </div>
+  </form>
+  {% if order.current_section and order.current_section.name == 'Sectia de livrare' %}
+<form method="post" action="{{ url_for('complete_order', order_id=order.id) }}">
+  <div class="actions"><button class="btn btn-ok" type="submit">Marcheaza livrata</button></div>
+</form>
+{% endif %}
+</div>
+{% endif %}
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3>Istoric</h3>
+    <div class="list">
+      {% for event in order.history_events %}
+      <div class="item">
+        <strong>{{ event.message }}</strong>
+        <div class="small">{{ event.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+      </div>
+      {% else %}
+      <p class="label">Fara istoric.</p>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="card">
+    <h3>Transferuri</h3>
+    <div class="list">
+      {% for transfer in order.transfers %}
+      <div class="item {% if transfer.is_return %}item-danger{% endif %}">
+        <strong>{{ transfer.from_section.name if transfer.from_section else 'Initial' }} → {{ transfer.to_section.name }}</strong>
+        <div class="small">{{ transfer.from_employee.full_name if transfer.from_employee else 'Admin' }} → {{ transfer.to_employee.full_name }}</div>
+        <div class="small">Trimisa: {{ transfer.sent_at.strftime('%d.%m.%Y %H:%M') }}</div>
+        <div class="small">Status: {{ transfer_status_label(transfer.status) }}{% if transfer.is_return %} · retur pentru remedieri{% endif %}</div>
+        {% if transfer.rejection_reason %}<div class="small">Motiv refuz: {{ transfer.rejection_reason }}</div>{% endif %}
+      </div>
+      {% else %}
+      <p class="label">Nu exista transferuri.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

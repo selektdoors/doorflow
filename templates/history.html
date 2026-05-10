@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Istoric{% endblock %}
+{% block content %}
+<div class="card table-wrap">
+  <h2>{% if employee_view %}Comenzile mele trecute{% else %}Istoric activitati{% endif %}</h2>
+  <table>
+    <thead>
+      <tr><th>Data</th><th>Comanda</th><th>Tip</th><th>Mesaj</th></tr>
+    </thead>
+    <tbody>
+      {% for event in events %}
+      <tr>
+        <td>{{ event.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+        <td>{{ event.order.order_number }}</td>
+        <td>{{ event.event_type }}</td>
+        <td>{{ event.message }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

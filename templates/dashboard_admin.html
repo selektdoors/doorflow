@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="grid grid-2">
+  <div class="card"><div class="label">Comenzi totale</div><div class="metric">{{ total_orders }}</div></div>
+  <div class="card"><div class="label">In lucru</div><div class="metric">{{ in_progress }}</div></div>
+  <div class="card"><div class="label">Asteapta receptie</div><div class="metric">{{ awaiting }}</div></div>
+  <div class="card"><div class="label">Refuzuri procesate</div><div class="metric">{{ rejected }}</div></div>
+</div>
+
+<div class="actions" style="margin: 16px 0;">
+  <a class="btn" href="{{ url_for('order_new') }}">Comanda noua</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3>Comenzi spre acceptare / notificari</h3>
+    {% if notifications %}
+      <div class="list">
+      {% for notif in notifications %}
+        <div class="item item-danger">
+          <strong>{{ notif.order.order_number }}</strong> · {{ notif.message }}
+          <div class="small">{{ notif.order.client_name }} · {{ notif.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+        </div>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p class="label">Nu exista notificari active.</p>
+    {% endif %}
+  </div>
+  <div class="card">
+    <h3>Comenzi recente</h3>
+    <div class="list">
+      {% for order in recent_orders %}
+      <div class="item">
+        <a href="{{ url_for('order_detail', order_id=order.id) }}"><strong>{{ order.order_number }}</strong></a>
+        <div>{{ order.client_name }} · {{ order.product_name }}</div>
+        <div class="small">Sectie: {{ order.current_section.name if order.current_section else '-' }} · Responsabil: {{ order.current_employee.full_name if order.current_employee else '-' }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Sectii</h3>
+  <div class="list">
+    {% for item in section_stats %}
+    <div class="item">
+      <strong>{{ item.section.name }}</strong>
+      <div class="small">Flux {{ item.section.flow_order }} · Termen {{ item.section.deadline_days }} zile</div>
+      <div class="actions">
+        <span class="status status-in_lucru">{{ item.active_orders }} comenzi</span>
+        <span class="status status-noua">{{ item.employees }} angajati</span>
+        <span class="status {% if item.delayed_orders %}status-refuzata_pentru_remedieri{% else %}status-in_lucru{% endif %}">{{ item.delayed_orders }} intarzieri</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

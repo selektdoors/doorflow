@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Rapoarte{% endblock %}
+{% block content %}
+<div class="card">
+  <form method="get">
+    <div class="row">
+      <div><label>De la</label><input type="date" name="start" value="{{ start }}"></div>
+      <div><label>Pana la</label><input type="date" name="end" value="{{ end }}"></div>
+      <div style="align-self:end;"><button type="submit">Actualizeaza</button></div>
+    </div>
+  </form>
+</div>
+
+<div class="grid grid-2">
+  <div class="card table-wrap">
+    <h2>Raport pe sectii</h2>
+    <table>
+      <thead><tr><th>Sectie</th><th>In lucru</th><th>Intarzieri</th><th>Executate</th><th>Trimise mai departe</th></tr></thead>
+      <tbody>
+      {% for item in section_reports %}
+        <tr>
+          <td>{{ item.section.name }}</td>
+          <td>{{ item.in_work }}</td>
+          <td>{{ item.delayed }}</td>
+          <td>{{ item.executed }}</td>
+          <td>{{ item.sent_forward }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card table-wrap">
+    <h2>Raport pe angajati</h2>
+    <table>
+      <thead><tr><th>Angajat</th><th>In lucru</th><th>Intarzieri</th><th>Executate</th><th>Trimise mai departe</th></tr></thead>
+      <tbody>
+      {% for item in employee_reports %}
+        <tr>
+          <td>{{ item.employee.full_name }}</td>
+          <td>{{ item.in_work }}</td>
+          <td>{{ item.delayed }}</td>
+          <td>{{ item.executed }}</td>
+          <td>{{ item.sent_forward }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

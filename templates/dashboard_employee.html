@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Panou angajat{% endblock %}
+{% block content %}
+<div class="grid grid-2">
+  <div class="card">
+    <h3>Comenzi spre acceptare / notificari</h3>
+    {% if inbox or notifications %}
+      <div class="list">
+      {% for transfer in inbox %}
+        <div class="item {% if transfer.is_return %}item-danger{% elif transfer.sender_note == 'Comanda noua' %}item-info{% endif %}">
+          <strong>{{ transfer.order.order_number }}</strong> · {{ transfer.order.client_name }}
+          <div>{{ transfer.order.product_name }}</div>
+          <div class="small">De la: {{ transfer.from_section.name if transfer.from_section else '-' }} / {{ transfer.from_employee.full_name if transfer.from_employee else 'Admin' }}</div>
+          {% if transfer.sender_note %}<div class="small">Obs: {{ transfer.sender_note }}</div>{% endif %}
+          {% if transfer.is_return %}
+  <div class="small danger-text">Refuzata si returnata catre tine. Necesita acceptare.</div>
+{% elif transfer.sender_note == 'Comanda noua' %}
+  <div class="small">Comanda noua receptionata. Necesita acceptare.</div>
+{% endif %}
+          <div class="actions">
+            <form method="post" action="{{ url_for('accept_transfer', transfer_id=transfer.id) }}" class="inline">
+              <button class="btn btn-ok" type="submit">Accepta</button>
+            </form>
+          </div>
+          {% if not transfer.is_return %}
+          <form method="post" action="{{ url_for('reject_transfer', transfer_id=transfer.id) }}">
+            <label>Motiv refuz</label>
+            <textarea name="rejection_reason" required placeholder="Ex: lipsa remedieri, defect de vopsire, cote incorecte"></textarea>
+            <button class="btn btn-danger" type="submit">Refuza</button>
+          </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% for notif in notifications %}
+        <div class="item item-danger">
+          <strong>{{ notif.order.order_number }}</strong>
+          <div>{{ notif.message }}</div>
+          <div class="small">{{ notif.order.client_name }} · {{ notif.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+        </div>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p class="label">Nu ai comenzi noi receptionate sau notificari.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Comenzile mele</h3>
+    {% if my_orders %}
+      <div class="list">
+      {% for order in my_orders %}
+        <div class="item">
+          <a href="{{ url_for('order_detail', order_id=order.id) }}"><strong>{{ order.order_number }}</strong></a>
+          <div>{{ order.client_name }} · {{ order.product_name }}</div>
+          <div class="small">Status: {{ status_label(order.status) }} · Termen client: {{ order.due_date.strftime('%d.%m.%Y') if order.due_date else '-' }}</div>
+        </div>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p class="label">Nu ai comenzi active.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <h3>Comenzi care au trecut pe la mine</h3>
+  {% if past_orders %}
+  <div class="list">
+    {% for order in past_orders %}
+      <div class="item">
+        <a href="{{ url_for('order_detail', order_id=order.id) }}"><strong>{{ order.order_number }}</strong></a>
+        <div>{{ order.client_name }} · {{ order.product_name }}</div>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="label">Nu exista comenzi in istoric.</p>
+  {% endif %}
+</div>
+{% endblock %}

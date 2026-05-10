@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Comanda noua{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Comanda noua</h2>
+  <form method="post">
+    <div class="row">
+      <div><label>Nr comanda</label><input name="order_number" required></div>
+      <div><label>Client</label><input name="client_name" required></div>
+    </div>
+    <div class="row">
+      <div><label>Produs</label><input name="product_name" required></div>
+      <div><label>Dimensiuni</label><input name="dimensions"></div>
+    </div>
+    <div class="row">
+      <div><label>Finisaj</label><input name="finish"></div>
+      <div><label>Cantitate</label><input name="quantity" type="number" value="1" min="1"></div>
+    </div>
+    <div class="row">
+      <div><label>Termen client</label><input name="due_date" type="date"></div>
+      <div><label>Angajat initial</label>
+        <select name="first_employee_id" required>
+          {% for employee in employees %}
+          <option value="{{ employee.id }}">{{ employee.full_name }} - {{ employee.section.name if employee.section else '-' }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div>
+      <label>Observatii</label>
+      <textarea name="notes"></textarea>
+    </div>
+    <div class="actions"><button type="submit">Salveaza</button></div>
+  </form>
+</div>
+{% endblock %}

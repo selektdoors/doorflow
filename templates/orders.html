@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Comenzi{% endblock %}
+{% block content %}
+<div class="card">
+  <form method="get">
+    <div class="row">
+      <div>
+        <label>Cauta comanda / client / produs</label>
+        <input name="q" value="{{ q }}">
+      </div>
+      <div style="align-self:end;">
+        <button type="submit">Cauta</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="card table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nr</th>
+        <th>Client</th>
+        <th>Produs</th>
+        <th>Sectie</th>
+        <th>Responsabil</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.order_number }}</td>
+        <td>{{ order.client_name }}</td>
+        <td>{{ order.product_name }}</td>
+        <td>{{ order.current_section.name if order.current_section else '-' }}</td>
+        <td>{{ order.current_employee.full_name if order.current_employee else '-' }}</td>
+        <td><span class="status status-{{ order.status }}">{{ status_label(order.status) }}</span></td>
+        <td><a class="btn btn-secondary" href="{{ url_for('order_detail', order_id=order.id) }}">Deschide</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7">Nu exista comenzi.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

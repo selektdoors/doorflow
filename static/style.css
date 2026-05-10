@@ -1,0 +1,111 @@
+:root {
+  --bg: #0f172a;
+  --panel: #ffffff;
+  --line: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --primary: #0f766e;
+  --danger: #b91c1c;
+  --warning: #b45309;
+  --ok: #166534;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f3f4f6;
+  color: var(--text);
+}
+.header {
+  background: var(--bg);
+  color: #fff;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.header a { color: #fff; text-decoration: none; margin-right: 12px; }
+.container { max-width: 1200px; margin: 20px auto; padding: 0 14px; }
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.metric { font-size: 28px; font-weight: 700; margin-top: 8px; }
+.label { color: var(--muted); font-size: 13px; }
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+th, td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+form.inline { display: inline; }
+input, select, textarea, button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font: inherit;
+}
+textarea { min-height: 100px; }
+button, .btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  width: auto;
+}
+.btn-secondary { background: #475569; }
+.btn-danger { background: var(--danger); }
+.btn-warning { background: var(--warning); }
+.btn-ok { background: var(--ok); }
+.row { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 12px; }
+.status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.status-noua { background: #e5e7eb; color: #111827; }
+.status-in_lucru { background: #dcfce7; color: #166534; }
+.status-in_asteptare_receptie { background: #dbeafe; color: #1d4ed8; }
+.status-refuzata_pentru_remedieri { background: #fee2e2; color: #b91c1c; }
+.status-finalizata { background: #ede9fe; color: #6d28d9; }
+.flash { padding: 12px 14px; border-radius: 10px; margin-bottom: 12px; }
+.flash-success { background: #dcfce7; color: #166534; }
+.flash-warning { background: #fef3c7; color: #92400e; }
+.flash-danger { background: #fee2e2; color: #991b1b; }
+.flash-info { background: #dbeafe; color: #1d4ed8; }
+.list { display: grid; gap: 12px; }
+.item { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; }
+.small { font-size: 12px; color: var(--muted); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.login-wrap { max-width: 420px; margin: 60px auto; }
+@media (max-width: 640px) {
+  .container { padding: 0 10px; }
+  th, td { padding: 8px; }
+}
+
+.item-danger { border-color: #fecaca; background: #fef2f2; }
+.danger-text { color: #b91c1c; font-weight: 700; }
+details summary { cursor: pointer; margin-bottom: 8px; }
+.item-info {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}

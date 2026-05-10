@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="login-wrap card">
+  <h2>Autentificare</h2>
+  <p class="label">Admin demo: admin / admin123</p>
+  <form method="post">
+    <div class="row">
+      <div>
+        <label>Utilizator</label>
+        <input name="username" required>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Parola</label>
+        <input type="password" name="password" required>
+      </div>
+    </div>
+    <button type="submit">Intra</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}DoorFlow{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  {% if current_user.is_authenticated %}
+  <div class="header">
+    <div>
+      <strong>DoorFlow</strong>
+      <div class="small">{{ current_user.full_name }}{% if current_user.section %} · {{ current_user.section.name }}{% endif %}</div>
+    </div>
+    <nav>
+      <a href="{{ url_for('index') }}">Acasa</a>
+      <a href="{{ url_for('orders') }}">Comenzi</a>
+      {% if current_user.role in [ROLE_ADMIN, ROLE_MANAGER] %}
+        <a href="{{ url_for('reports') }}">Rapoarte</a>
+      {% endif %}
+      {% if current_user.role == ROLE_EMPLOYEE %}
+        <a href="{{ url_for('my_history') }}">Comenzile mele</a>
+      {% endif %}
+      {% if current_user.is_admin %}
+        <a href="{{ url_for('employees') }}">Angajati</a>
+        <a href="{{ url_for('admin_settings') }}">Setari</a>
+        <a href="{{ url_for('admin_history') }}">Istoric</a>
+      {% endif %}
+      <a href="{{ url_for('logout') }}">Iesire</a>
+    </nav>
+  </div>
+  {% endif %}
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

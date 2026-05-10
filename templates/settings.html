@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Setari{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Termene pe sectie</h2>
+  <form method="post">
+    <div class="list">
+      {% for section in sections %}
+      <div class="item">
+        <strong>{{ section.name }}</strong>
+        <div class="small">Flux {{ section.flow_order }}</div>
+        <label>Termen maxim in zile</label>
+        <input type="number" min="0" name="deadline_{{ section.id }}" value="{{ section.deadline_days }}">
+      </div>
+      {% endfor %}
+    </div>
+    <div class="actions"><button type="submit">Salveaza setarile</button></div>
+  </form>
+</div>
+{% endblock %}
